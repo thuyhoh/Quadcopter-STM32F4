@@ -1,0 +1,17 @@
+../Devices/nrf24l01/nrf24l01.c:28:6:CS_Select	8	static
+../Devices/nrf24l01/nrf24l01.c:33:6:CS_UnSelect	8	static
+../Devices/nrf24l01/nrf24l01.c:39:6:CE_Enable	8	static
+../Devices/nrf24l01/nrf24l01.c:44:6:CE_Disable	8	static
+../Devices/nrf24l01/nrf24l01.c:52:6:nrf24_WriteReg	24	static
+../Devices/nrf24l01/nrf24l01.c:68:6:nrf24_WriteRegMulti	32	static
+../Devices/nrf24l01/nrf24l01.c:85:9:nrf24_ReadReg	24	static
+../Devices/nrf24l01/nrf24l01.c:103:6:nrf24_ReadReg_Multi	24	static
+../Devices/nrf24l01/nrf24l01.c:117:6:nrfsendCmd	16	static
+../Devices/nrf24l01/nrf24l01.c:128:6:nrf24_reset	40	static
+../Devices/nrf24l01/nrf24l01.c:176:6:NRF24_Init	8	static
+../Devices/nrf24l01/nrf24l01.c:203:6:NRF24_TxMode	24	static
+../Devices/nrf24l01/nrf24l01.c:226:9:NRF24_Transmit	24	static
+../Devices/nrf24l01/nrf24l01.c:263:6:NRF24_RxMode	24	static
+../Devices/nrf24l01/nrf24l01.c:303:9:isDataAvailable	24	static
+../Devices/nrf24l01/nrf24l01.c:319:6:NRF24_Receive	24	static
+../Devices/nrf24l01/nrf24l01.c:345:6:NRF24_ReadAll	32	static
