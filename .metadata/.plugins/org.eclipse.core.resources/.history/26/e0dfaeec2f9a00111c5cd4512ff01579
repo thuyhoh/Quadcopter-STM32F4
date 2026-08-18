@@ -1,0 +1,28 @@
+/*
+ * bmp280_reg.h
+ *
+ *  Created on: Aug 17, 2026
+ *      Author: thuy
+ */
+
+#ifndef __BMP280_REG_H_
+#define __BMP280_REG_H_
+
+/* Memory map */
+#define temp_xlsb 	0xFC
+#define temp_lsb	0xFB
+#define temp_msb	0xFA
+#define press_xlsb	0xF9
+#define press_lsb	0xF8
+#define press_msb	0xF7
+#define config		0xF5
+#define ctrl_meas	0xF4
+#define status 0xF3 0xF3
+#define reset 		0xE0
+#define id 			0xD0
+
+//#define CHIP_ID 0x58
+
+
+
+#endif /* BMP280_REG_H_ */

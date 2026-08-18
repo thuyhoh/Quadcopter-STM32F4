@@ -1,0 +1,10 @@
+20:22:21 **** Incremental Build of configuration Debug for project STM32-Fly_Controller ****
+make -j12 all 
+arm-none-eabi-size  STM32-Fly_Controller.elf 
+   text	   data	    bss	    dec	    hex	filename
+  23224	     96	   2448	  25768	   64a8	STM32-Fly_Controller.elf
+Finished building: default.size.stdout
+ 
+
+20:22:21 Build Finished. 0 errors, 0 warnings. (took 215ms)
+

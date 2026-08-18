@@ -26,6 +26,8 @@ OBJCOPY_BIN :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+Devices/bmp280 \
+Devices/hmc5883l \
 Devices/nrf24l01 \
 Drivers/STM32F4xx_HAL_Driver/Src \
 

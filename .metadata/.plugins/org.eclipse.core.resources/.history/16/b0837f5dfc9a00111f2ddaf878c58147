@@ -1,0 +1,89 @@
+/*
+ * hmc5883l.h
+ *
+ *  Created on: Aug 18, 2026
+ *      Author: thuy
+ */
+
+#ifndef __HMC5883L_H_
+#define __HMC5883L_H_
+
+#include "stm32f4xx_hal.h"
+
+extern I2C_HandleTypeDef hi2c1;
+
+#define HMC5883L_I2C &hi2c1
+
+#define HMC5883L_ADDR    (0x1E << 1)
+
+
+typedef struct {
+	uint8_t mode;
+	uint8_t op_mode;
+	uint8_t dataout_rate;
+	uint8_t num_samples;
+	uint8_t gain;
+}hmc5883l_config_t;
+
+/*Data Output Rates*/
+#define DATAOUT_RATE_0p75HZ 	0x00
+#define DATAOUT_RATE_1p5HZ 		0x01
+#define DATAOUT_RATE_3HZ 		0x02
+#define DATAOUT_RATE_7p5HZ 		0x03
+#define DATAOUT_RATE_15HZ 		0x04 	// default
+#define DATAOUT_RATE_30HZ 		0x05
+#define DATAOUT_RATE_75HZ 		0x06
+#define DATAOUT_RATE_OFF 		0x07
+
+/* Measurement Mode */
+#define NORMAL_MODE				0x00	// default
+#define POS_MODE				0x01
+#define NEG_MODE				0x02
+
+/* number of samples averaged */
+#define SAMPLE_AVR_1			0x00
+#define SAMPLE_AVR_2			0x01
+#define SAMPLE_AVR_4			0x02
+#define SAMPLE_AVR_8			0x03	// default
+
+/* Gain Settings */
+#define GAIN_0p88Ga				0x00
+#define GAIN_1p3Ga				0x01
+#define GAIN_1p9Ga				0x02	// default
+#define GAIN_2p5Ga				0x03
+#define GAIN_4Ga				0x04
+#define GAIN_4p7Ga				0x05
+#define GAIN_5p6Ga				0x06
+#define GAIN_8p1Ga				0x07
+
+/* Operating Mode */
+#define CONTINUOUS_OP_MODE 		0x00
+#define SINGLE_OP_MODE			0x01
+
+/* LSB/Gaus */
+#define LSB_per_GAUSS_1370		1370
+#define LSB_per_GAUSS_1090 		1090 	// default
+#define LSB_per_GAUSS_820 		820
+#define LSB_per_GAUSS_660 		660
+#define LSB_per_GAUSS_440 		440
+#define LSB_per_GAUSS_390 		390
+#define LSB_per_GAUSS_330 		330
+#define LSB_per_GAUSS_230 		230
+
+/* function prototypes */
+void hmc5883l_init(void);
+void hmc5883l_read(void);
+
+/* Memory map */
+#define CONFIGA_REG 0x00
+#define CONFIGB_REG 0x01
+#define MODE_REG 	0x02
+#define DATAOUT_REG 0x03	// 0x03 - 0x08
+
+#define STATUS_REG	0x09
+#define IDA_REG		0x0A
+#define IDB_REG		0x0B
+#define IDC_REG		0x0C
+
+
+#endif /* DEVICES_HMC5883L_HMC5883L_H_ */

@@ -1,0 +1,75 @@
+/*
+ * bmp280.h
+ *
+ *  Created on: Aug 17, 2026
+ *      Author: thuy
+ */
+
+#ifndef __BMP280_H_
+#define __BMP280_H_
+
+#include "bmp280_reg.h"
+
+#include "stm32f4xx_hal.h"
+
+extern I2C_HandleTypeDef hi2c1;
+
+#define BMP280_I2C &hi2c1
+
+#define SDO_SET_HIGH 0    // Logic level of sdo pin
+#if SDO_SET_HIGH
+#define BMP280_SLAVE_ADDR (0x77)
+#else
+#define BMP280_SLAVE_ADDR (0x76)
+#endif
+
+// Oversampling definitions
+#define OSRS_OFF    	0x00
+#define OSRS_1    		0x01
+#define OSRS_2    		0x02
+#define OSRS_4    		0x03
+#define OSRS_8    		0x04
+#define OSRS_16    		0x05
+
+// MODE Definitions
+#define MODE_SLEEP      0x00
+#define MODE_FORCED     0x01
+#define MODE_NORMAL     0x03
+
+// Standby Time
+#define T_SB_0p5    	0x00
+#define T_SB_62p5    	0x01
+#define T_SB_125    	0x02
+#define T_SB_250    	0x03
+#define T_SB_500    	0x04
+#define T_SB_1000    	0x05
+#define T_SB_2000    	0x06
+#define T_SB_4000    	0x07
+
+// IIR Filter Coefficients
+#define IIR_OFF     	0x00
+#define IIR_2     		0x01
+#define IIR_4     		0x02
+#define IIR_8     		0x03
+#define IIR_16     		0x04
+
+
+
+/* function prototypte */
+uint8_t bmp280_check(void);
+
+
+/* Memory map */
+#define TEMP_XLSB 	0xFC
+#define TEMP_LSB	0xFB
+#define TEMP_MSP	0xFA
+#define PRESS_XLSB	0xF9
+#define PRESS_LSB	0xF8
+#define PRESS_MSB	0xF7
+#define CONFIG		0xF5
+#define CTRL_MEAS	0xF4
+#define STATUS 		0xF3
+#define RESET 		0xE0
+#define ID 			0xD0
+
+#endif /* DEVICES_BMP280_BMP280_H_ */

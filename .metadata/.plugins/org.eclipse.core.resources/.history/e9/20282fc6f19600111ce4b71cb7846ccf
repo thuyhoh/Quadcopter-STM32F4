@@ -1,0 +1,18 @@
+#ifndef __NRF24L01_H__
+#define __NRF24L01_H__
+
+
+#include "nrf24_conf.h"
+#include "nrf24_reg_addr.h"
+
+
+void nrf24_init(void)
+uint8_t nrf24_transmit(uint8_t *data);
+void nrf24_TxMode(uint8_t *addr, uint8_t channel);
+
+
+
+
+
+
+#endif /* __NRF24L01_H__ */

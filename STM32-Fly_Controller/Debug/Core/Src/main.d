@@ -33,7 +33,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- /home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/nrf24l01/nrf24l01.h
+ /home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/nrf24l01/nrf24l01.h \
+ /home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/bmp280/bmp280.h \
+ /home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/hmc5883l/hmc5883l.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -70,3 +72,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 /home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/nrf24l01/nrf24l01.h:
+/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/bmp280/bmp280.h:
+/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/hmc5883l/hmc5883l.h:

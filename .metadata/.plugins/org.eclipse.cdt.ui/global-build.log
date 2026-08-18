@@ -1,0 +1,78 @@
+20:22:14 **** Incremental Build of configuration Debug for project STM32-Fly_Controller ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F411xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/nrf24l01" -I"/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/bmp280" -I"/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/hmc5883l" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+In file included from ../Core/Src/main.c:27:
+/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/hmc5883l/hmc5883l.h:89: warning: "STATUS_REG" redefined
+   89 | #define STATUS_REG      0x09
+      | 
+In file included from ../Core/Src/main.c:25:
+/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/Devices/bmp280/bmp280.h:75: note: this is the location of the previous definition
+   75 | #define STATUS_REG              0xF3
+      | 
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:174:30: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+  174 |   HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
+      |                              ^~~~~
+      |                              |
+      |                              char *
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:411,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:745:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
+  745 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~~~~~~~^~~~~
+../Core/Src/main.c:178:30: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+  178 |   HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
+      |                              ^~~~~
+      |                              |
+      |                              char *
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:745:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
+  745 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~~~~~~~^~~~~
+../Core/Src/main.c:193:11: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+  193 |           memset(erlog, 0, sizeof(erlog));
+      |           ^~~~~~
+../Core/Src/main.c:29:1: note: include '<string.h>' or provide a declaration of 'memset'
+   28 | #include "stdlib.h"
+  +++ |+#include <string.h>
+   29 | /* USER CODE END Includes */
+../Core/Src/main.c:193:11: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+  193 |           memset(erlog, 0, sizeof(erlog));
+      |           ^~~~~~
+../Core/Src/main.c:193:11: note: include '<string.h>' or provide a declaration of 'memset'
+../Core/Src/main.c:195:40: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+  195 |             HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
+      |                                        ^~~~~
+      |                                        |
+      |                                        char *
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:745:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
+  745 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~~~~~~~^~~~~
+../Core/Src/main.c:96:17: warning: unused variable 'ret' [-Wunused-variable]
+   96 |         uint8_t ret;
+      |                 ^~~
+arm-none-eabi-gcc -o "STM32-Fly_Controller.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/thuy/embedded/project/Quadcopter-STM32F4/STM32-Fly_Controller/STM32F411CEUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32-Fly_Controller.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STM32-Fly_Controller.elf
+ 
+arm-none-eabi-size  STM32-Fly_Controller.elf 
+arm-none-eabi-objdump -h -S STM32-Fly_Controller.elf  > "STM32-Fly_Controller.list"
+arm-none-eabi-objcopy  -O ihex STM32-Fly_Controller.elf  "STM32-Fly_Controller.hex"
+arm-none-eabi-objcopy  -O binary STM32-Fly_Controller.elf  "STM32-Fly_Controller.bin"
+   text	   data	    bss	    dec	    hex	filename
+  23224	     96	   2448	  25768	   64a8	STM32-Fly_Controller.elf
+Finished building: default.size.stdout
+ 
+Finished building: STM32-Fly_Controller.bin
+Finished building: STM32-Fly_Controller.hex
+ 
+ 
+Finished building: STM32-Fly_Controller.list
+ 
+20:22:21 **** Incremental Build of configuration Debug for project STM32-Fly_Controller ****
+make -j12 all 
+arm-none-eabi-size  STM32-Fly_Controller.elf 
+   text	   data	    bss	    dec	    hex	filename
+  23224	     96	   2448	  25768	   64a8	STM32-Fly_Controller.elf
+Finished building: default.size.stdout
+ 

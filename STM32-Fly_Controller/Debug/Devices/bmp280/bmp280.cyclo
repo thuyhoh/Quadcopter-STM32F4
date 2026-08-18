@@ -1,0 +1,7 @@
+../Devices/bmp280/bmp280.c:17:16:trimParameters	2
+../Devices/bmp280/bmp280.c:41:9:bmp280_init	7
+../Devices/bmp280/bmp280.c:72:12:bmp280_read_raw	2
+../Devices/bmp280/bmp280.c:90:21:bmp280_compensate_T_int32	1
+../Devices/bmp280/bmp280.c:102:21:bmp280_compensate_P_int64	2
+../Devices/bmp280/bmp280.c:123:6:bmp280_measure	2
+../Devices/bmp280/bmp280.c:136:6:bmp280_wakeup	1

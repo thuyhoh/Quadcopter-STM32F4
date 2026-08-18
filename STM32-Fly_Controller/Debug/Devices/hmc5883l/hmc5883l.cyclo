@@ -1,0 +1,2 @@
+../Devices/hmc5883l/hmc5883l.c:12:6:hmc5883l_init	9
+../Devices/hmc5883l/hmc5883l.c:54:6:hmc5883l_read	1

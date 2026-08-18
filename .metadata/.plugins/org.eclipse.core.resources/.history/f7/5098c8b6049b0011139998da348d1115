@@ -1,0 +1,72 @@
+/*
+ * hmc5883l.c
+ *
+ *  Created on: Aug 18, 2026
+ *      Author: thuy
+ */
+#include "hmc5883l.h"
+
+//static uint16_t x_raw, y_raw, z_raw;
+static float lsb_per_gause = LSB_per_GAUSS_1090;
+
+void hmc5883l_init(hmc5883l_config_t *config)
+{
+	switch (config->gain) {
+		case GAIN_0p88Ga:
+			lsb_per_gause = LSB_per_GAUSS_1370;
+			break;
+		case GAIN_1p3Ga:
+			lsb_per_gause = LSB_per_GAUSS_1090;
+			break;
+		case GAIN_1p9Ga:
+			lsb_per_gause = LSB_per_GAUSS_820;
+			break;
+		case GAIN_2p5Ga:
+			lsb_per_gause = LSB_per_GAUSS_660;
+			break;
+		case GAIN_4Ga:
+			lsb_per_gause = LSB_per_GAUSS_440;
+			break;
+		case GAIN_4p7Ga:
+			lsb_per_gause = LSB_per_GAUSS_390;
+			break;
+		case GAIN_5p6Ga:
+			lsb_per_gause = LSB_per_GAUSS_330;
+			break;
+		case GAIN_8p1Ga:
+			lsb_per_gause = LSB_per_GAUSS_230;
+			break;
+		default:
+			break;
+	}
+
+	uint8_t datatowrite = 0;
+	datatowrite =  (config->num_samples<<5)| (config->dataout_rate <<2) | config->mode;
+	HAL_I2C_Mem_Read(HMC5883L_I2C, HMC5883L_ADDR, CONFIGA_REG, I2C_MEMADD_SIZE_8BIT, &datatowrite, 1, HAL_MAX_DELAY);
+
+	datatowrite = config->gain<<5;
+	HAL_I2C_Mem_Read(HMC5883L_I2C, HMC5883L_ADDR, CONFIGB_REG, I2C_MEMADD_SIZE_8BIT, &datatowrite, 1, HAL_MAX_DELAY);
+
+	datatowrite = config->op_mode;
+	HAL_I2C_Mem_Read(HMC5883L_I2C, HMC5883L_ADDR, MODE_REG, I2C_MEMADD_SIZE_8BIT, &datatowrite, 1, HAL_MAX_DELAY);
+}
+
+uint8_t *hmc5883l_read(hmc5884l_val_t *val)
+{
+	uint8_t data[6];
+	HAL_I2C_Mem_Read(HMC5883L_I2C,
+	                 HMC5883L_ADDR,
+	                 DATAOUT_REG,
+	                 I2C_MEMADD_SIZE_8BIT,
+	                 data,
+	                 6,
+	                 100);
+//	val->x = (int16_t)((data[0] << 8) | data[1]);
+//	val->z = (int16_t)((data[2] << 8) | data[3]);
+//	val->y = (int16_t)((data[4] << 8) | data[5]);
+	return data;
+}
+
+
+
+

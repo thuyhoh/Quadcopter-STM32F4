@@ -22,23 +22,17 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "nrf24l01.h"
+#include "bmp280.h"
+#include "stdio.h"
+#include "hmc5883l.h"
+#include "stdlib.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-struct RC_Packet{
-	uint16_t roll;
-	uint16_t pitch;
-	uint16_t throttle;
-	uint16_t yaw;
 
-	uint8_t arm;
-	uint8_t fly_mode;
-//	uint8_t rth;
-//	uint8_t aux1;
-};
 
-struct RC_Packet r_packet;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -84,6 +78,11 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN 0 */
 uint8_t RxAddr[] = {0xEE, 0xDD, 0xCC, 0xBB, 0xAA};
 uint8_t RxData[32];
+char erlog[50];
+//RC_Packet r_packet;
+hmc5884l_val_t mval;
+uint8_t data[3];
+hmc5884l_val_t val;
 /* USER CODE END 0 */
 
 /**
@@ -94,7 +93,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	uint8_t ret;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -122,10 +121,61 @@ int main(void)
   MX_TIM2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  NRF24_Init();
-  NRF24_RxMode(RxAddr, 10);
-  HAL_UART_Transmit(&huart1, "test\n", 5, 100);
-  HAL_TIM_Base_Start(&htim2);
+//  uint32_t arr = __HAL_TIM_GET_AUTORELOAD(&htim2);
+//  float duty = 4.5;
+//  uint32_t ccr;
+//  NRF24_Init();
+//  NRF24_RxMode(RxAddr, 10);
+
+//  if((ret = bmp280_init(OSRS_2, OSRS_2, MODE_NORMAL, T_SB_0p5, IIR_16)) != 0)
+//  {
+//	  sprintf(erlog, "bmp280_init: error code %d\n", ret);
+//	  HAL_UART_Transmit(&huart1, (uint8_t *)&erlog, sizeof(erlog), HAL_MAX_DELAY);
+//	  Error_Handler();
+//  }
+
+//  HAL_TIM_Base_Start(&htim2);
+//  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+//  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+//  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+//  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
+//  HAL_ADC_Start(&hadc1);
+//  uint8_t id[3];
+//
+//  HAL_StatusTypeDef status;
+//
+//  status = HAL_I2C_Mem_Read(&hi2c1,
+//                            HMC5883L_ADDR,
+//                            0x0A,
+//                            I2C_MEMADD_SIZE_8BIT,
+//                            id,
+//                            3,
+//                            100);
+//
+//  if (status == HAL_OK)
+//  {
+//      sprintf(erlog, "ID: %02X %02X %02X\r\n",
+//             id[0], id[1], id[2]);
+//      HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
+//  }
+
+  hmc5883l_config_t mconfig;
+  mconfig.dataout_rate = DATAOUT_RATE_15HZ;
+  mconfig.gain = GAIN_1p3Ga;
+  mconfig.mode = NORMAL_MODE;
+  mconfig.num_samples = SAMPLE_AVR_8;
+  mconfig.op_mode = CONTINUOUS_OP_MODE;
+
+  hmc5883l_init(&mconfig);
+
+  HAL_I2C_Mem_Read(HMC5883L_I2C, HMC5883L_ADDR, IDA_REG, I2C_MEMADD_SIZE_8BIT, data, 3, 100);
+
+  sprintf(erlog, "ID: %#02x %#02x %#02x \r\n",data[0] ,data[1], data[2]);
+  HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
+
+  HAL_I2C_Mem_Read(HMC5883L_I2C, HMC5883L_ADDR, CONFIGA_REG, I2C_MEMADD_SIZE_8BIT, data, 3, 100);
+  sprintf(erlog, "CONFIGA: %#02x, CONFIGB: %#02x, MODE: %#02x \r\n",data[0] ,data[1], data[2]);
+  HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -138,9 +188,12 @@ int main(void)
 //	  if(isDataAvailable(1) == 1)
 //	  {
 //		  NRF24_Receive((uint8_t*)&r_packet);
-////		  HAL_UART_Transmit(&huart1, RxData, 32, 1000);
 //	  }
-////	  HAL_Delay(1000);
+	  hmc5883l_read(&mval);
+	  memset(erlog, 0, sizeof(erlog));
+	  sprintf(erlog, "X: %d, Z: %d, Y: %d \r\n",mval.x ,mval.z, mval.y);
+	    HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
+	    HAL_Delay(1000);
 
   }
   /* USER CODE END 3 */
@@ -216,7 +269,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
@@ -260,7 +313,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.ClockSpeed = 400000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;

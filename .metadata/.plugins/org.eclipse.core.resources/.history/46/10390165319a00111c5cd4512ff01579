@@ -1,0 +1,30 @@
+/*
+ * bmp280_conf.h
+ *
+ *  Created on: Aug 17, 2026
+ *      Author: thuy
+ */
+
+#ifndef __BMP280_CONF_H_
+#define __BMP280_CONF_H_
+
+#include "stm32f4xx_hal.h"
+
+extern I2C_HandleTypeDef hi2c1;
+
+#define BMP280_I2C &hi2c1
+
+#define SDO_SET_HIGH 0    // Logic level of sdo pin
+#if SDO_SET_HIGH
+#define BMP280_SLAVE_ADDR (0x77<<1)
+#else
+#define BMP280_SLAVE_ADDR (0x76<<1)
+#endif
+
+
+
+
+
+
+
+#endif

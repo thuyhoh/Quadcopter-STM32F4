@@ -1,0 +1,135 @@
+/*
+ * bmp280.c
+ *
+ *  Created on: Aug 17, 2026
+ *      Author: thuy
+ */
+#include "bmp280.h"
+
+
+static uint16_t dig_T1, dig_P1;
+static int16_t dig_T2, dig_T3 , dig_P2, dig_P3, dig_P4, dig_P5, dig_P6, dig_P7, dig_P8, dig_P9;
+static int32_t tRaw, pRaw;
+
+BMP280_U32_t t_fine;
+
+
+static uint8_t trimParameters(void)
+{
+	uint8_t trimdata[25];
+
+	if(HAL_I2C_Mem_Read(BMP280_I2C, BMP280_SLAVE_ADDR, 0x88, I2C_MEMADD_SIZE_8BIT, trimdata, 25, HAL_MAX_DELAY) != HAL_OK)
+		return 1;
+
+	dig_T1 = (uint16_t)((trimdata[1]<<8) | trimdata[0]);   //   0x88 / 0x89
+	dig_T2 = (int16_t) ((trimdata[3]<<8) | trimdata[2]);   //	0x8A / 0x8B
+	dig_T3 = (int16_t) ((trimdata[5]<<8) | trimdata[4]);   //	0x8C / 0x8D
+
+	dig_P1 = (uint16_t)((trimdata[7]<<8) | trimdata[6]);   //	0x8E / 0x8F
+	dig_P2 = (int16_t) ((trimdata[9]<<8) | trimdata[8]);   // 	0x90 / 0x91
+	dig_P3 = (int16_t) ((trimdata[11]<<8) | trimdata[10]); //	0x92 / 0x93
+	dig_P4 = (int16_t) ((trimdata[13]<<8) | trimdata[12]); //	0x94 / 0x95
+	dig_P5 = (int16_t) ((trimdata[15]<<8) | trimdata[14]); //	0x96 / 0x97
+	dig_P6 = (int16_t) ((trimdata[17]<<8) | trimdata[16]); //	0x98 / 0x99
+	dig_P7 = (int16_t) ((trimdata[19]<<8) | trimdata[18]); //	0x9A / 0x9B
+	dig_P8 = (int16_t) ((trimdata[21]<<8) | trimdata[20]); //	0x9C / 0x9D
+	dig_P9 = (int16_t) ((trimdata[23]<<8) | trimdata[22]); //	0x9E / 0x9F
+
+	return 0;
+}
+
+uint8_t bmp280_init(uint8_t osr_t, uint8_t osr_p, uint8_t mode, uint8_t t_sb, uint8_t filter)
+{
+	uint8_t datatowrite = 0;
+	uint8_t datatocheck = 0;
+	if(trimParameters() != 0) return 1;
+	/* power-on-reset procedure */
+	datatowrite = 0xB6;
+	if(HAL_I2C_Mem_Write(BMP280_I2C, BMP280_SLAVE_ADDR, RESET_REG, I2C_MEMADD_SIZE_8BIT, &datatowrite, 1, HAL_MAX_DELAY) != HAL_OK)
+		return 2;
+	HAL_Delay(100);
+
+	/* t_sb + iir filter */
+	datatowrite = (t_sb << 5)|(filter<<2);
+	if(HAL_I2C_Mem_Write(BMP280_I2C, BMP280_SLAVE_ADDR, CONFIG_REG, I2C_MEMADD_SIZE_8BIT, &datatowrite, 1, HAL_MAX_DELAY) != HAL_OK)
+		return 3;
+	HAL_I2C_Mem_Read(BMP280_I2C, BMP280_SLAVE_ADDR, CONFIG_REG, I2C_MEMADD_SIZE_8BIT, &datatocheck, 1, HAL_MAX_DELAY);
+	if(datatocheck != datatowrite)
+		return 4;
+	HAL_Delay(100);
+
+	/* Config */
+	datatowrite = mode | (osr_p<<2) | (osr_t<<5);
+	if(HAL_I2C_Mem_Write(BMP280_I2C, BMP280_SLAVE_ADDR, CTRL_MEAS_REG, I2C_MEMADD_SIZE_8BIT, &datatowrite, 1, HAL_MAX_DELAY) != HAL_OK)
+		return 5;
+	HAL_I2C_Mem_Read(BMP280_I2C, BMP280_SLAVE_ADDR, CTRL_MEAS_REG, I2C_MEMADD_SIZE_8BIT, &datatocheck, 1, HAL_MAX_DELAY);
+	if(datatocheck != datatowrite)
+		return 6;
+	HAL_Delay(100);
+	return 0;
+}
+
+static int bmp280_read_raw(void)
+{
+	uint8_t rawData[6];
+	uint8_t chip_id = 0;
+	HAL_I2C_Mem_Read(BMP280_I2C, BMP280_SLAVE_ADDR, ID_REG, I2C_MEMADD_SIZE_8BIT, &chip_id, 1, 1000);
+	if(chip_id == 0x58)
+	{
+		HAL_I2C_Mem_Read(BMP280_I2C, BMP280_SLAVE_ADDR, PRESS_MSB_REG, I2C_MEMADD_SIZE_8BIT, rawData, 6, HAL_MAX_DELAY);
+		pRaw = (rawData[0]<<12) | (rawData[1]<<4) | (rawData[2] >> 4);
+		tRaw = (rawData[3]<<12) | (rawData[4]<<4) | (rawData[5] >> 4);
+
+		return 0;
+	}
+	return 1;
+}
+
+// Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
+// t_fine carries fine temperature as global value
+static BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
+{
+	BMP280_S32_t var1, var2, T;
+	var1 = ((((adc_T>>3) - ((BMP280_S32_t)dig_T1<<1))) * ((BMP280_S32_t)dig_T2)) >> 11;
+	var2 = (((((adc_T>>4) - ((BMP280_S32_t)dig_T1)) * ((adc_T>>4) - ((BMP280_S32_t)dig_T1))) >> 12) * ((BMP280_S32_t)dig_T3)) >> 14;
+	t_fine = var1 + var2;
+	T = (t_fine * 5 + 128) >> 8;
+	return T;
+}
+
+// Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
+// Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
+static BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
+{
+	BMP280_S64_t var1, var2, p;
+	var1 = ((BMP280_S64_t)t_fine) - 128000;
+	var2 = var1 * var1 * (BMP280_S64_t)dig_P6;
+	var2 = var2 + ((var1*(BMP280_S64_t)dig_P5)<<17);
+	var2 = var2 + (((BMP280_S64_t)dig_P4)<<35);
+	var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3)>>8) + ((var1 * (BMP280_S64_t)dig_P2)<<12);
+	var1 = (((((BMP280_S64_t)1)<<47)+var1))*((BMP280_S64_t)dig_P1)>>33;
+	if (var1 == 0)
+	{
+		return 0; // avoid exception caused by division by zero
+	}
+	p = 1048576-adc_P;
+	p = (((p<<31)-var2)*3125)/var1;
+	var1 = (((BMP280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
+	var2 = (((BMP280_S64_t)dig_P8) * p) >> 19;
+	p = ((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7)<<4);
+	return (BMP280_U32_t)p;
+}
+
+void bmp280_measure(float *temperature, float *pressure)
+{
+	if(bmp280_read_raw() == 0)
+	{
+		*temperature = bmp280_compensate_T_int32(tRaw)/100.0f;
+		*pressure = bmp280_compensate_P_int64(pRaw)/256.0f;
+	}else
+	{
+		*temperature = 0;
+		*pressure = 0;
+	}
+}
+

@@ -25,21 +25,22 @@ extern SPI_HandleTypeDef hspi1;
 #define NRF24_IRQ_PORT		GPIOB
 #define NRF24_IRQ_PIN		GPIO_PIN_1
 
-/* Instruction Mnemonics */
-#define R_REGISTER    		0x00
-#define W_REGISTER    		0x20
-#define REGISTER_MASK 		0x1F
-#define ACTIVATE      		0x50
-#define R_RX_PL_WID   		0x60
-#define R_RX_PAYLOAD  		0x61
-#define W_TX_PAYLOAD  		0xA0
-#define W_ACK_PAYLOAD 		0xA8
-#define FLUSH_TX      		0xE1
-#define FLUSH_RX      		0xE2
-#define REUSE_TX_PL   		0xE3
-#define NOP           		0xFF
+typedef struct {
+	uint16_t roll;
+	uint16_t pitch;
+	uint16_t throttle;
+	uint16_t yaw;
 
+	uint8_t arm;
+	uint8_t fly_mode;
+//	uint8_t rth;
+//	uint8_t aux1;
+}RC_Packet;
 
+typedef enum{
+	DISARM,
+	ARM
+}armMode;
 
 
 #endif /* NRF24_CONF_H_ */
