@@ -189,11 +189,11 @@ int main(void)
 //	  {
 //		  NRF24_Receive((uint8_t*)&r_packet);
 //	  }
-	  hmc5883l_read(&mval);
-	  memset(erlog, 0, sizeof(erlog));
-	  sprintf(erlog, "X: %d, Z: %d, Y: %d \r\n",mval.x ,mval.z, mval.y);
-	    HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
-	    HAL_Delay(1000);
+	hmc5883l_read(&mval);
+	memset(erlog, 0, sizeof(erlog));
+	sprintf(erlog, "Mag: %d, Z: %d, Y: %d \r\n",mval.x ,mval.z, mval.y);
+	HAL_UART_Transmit(&huart1, erlog, sizeof(erlog), HAL_MAX_DELAY);
+	HAL_Delay(1000);
 
   }
   /* USER CODE END 3 */

@@ -1,0 +1,14 @@
+/*
+ * mpu6050.c
+ *
+ *  Created on: Aug 19, 2026
+ *      Author: thuy
+ */
+
+#include "mpu6050.h"
+
+void mpu6050_init(void)
+{
+	HAL_I2C_Mem_Read(MPU6050_I2C, DevAddress, MemAddress, MemAddSize, pData, Size, Timeout)
+}
+

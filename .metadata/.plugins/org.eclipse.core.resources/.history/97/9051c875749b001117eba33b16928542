@@ -1,0 +1,32 @@
+/*
+ * mpu6050.h
+ *
+ *  Created on: Aug 19, 2026
+ *      Author: thuy
+ */
+
+#ifndef MPU6050_H_
+#define MPU6050_H_
+
+WHO_AM_I       0x75
+PWR_MGMT_1     0x6B
+SMPLRT_DIV     0x19
+CONFIG         0x1A
+GYRO_CONFIG    0x1B
+ACCEL_CONFIG   0x1C
+
+ACCEL_XOUT_H   0x3B
+ACCEL_XOUT_L   0x3C
+ACCEL_YOUT_H   0x3D
+ACCEL_YOUT_L   0x3E
+ACCEL_ZOUT_H   0x3F
+ACCEL_ZOUT_L   0x40
+
+GYRO_XOUT_H    0x43
+GYRO_XOUT_L    0x44
+GYRO_YOUT_H    0x45
+GYRO_YOUT_L    0x46
+GYRO_ZOUT_H    0x47
+GYRO_ZOUT_L    0x48
+
+#endif /* MPU6050_H_ */
